@@ -1,16 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "css"
-		},
-		{
-			"path": "image"
-		},
-		{
-			"path": "js"
-		},
-		{
-			"path": "ServidorGOT"
+			"path": "."
 		}
 	]
 }
