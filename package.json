@@ -1,0 +1,23 @@
+{
+  "name": "simulacro2l",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "dependencies": {
+    "npm": "^6.10.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patoattie/Simulacro2LIII.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patoattie/Simulacro2LIII/issues"
+  },
+  "homepage": "https://github.com/patoattie/Simulacro2LIII#readme"
+}
