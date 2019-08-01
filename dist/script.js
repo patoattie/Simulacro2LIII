@@ -17,7 +17,7 @@ function activarMenu(elemento)
 {
     if($(".active")[0])
     {
-        $(".active")[0].removeAttr("class");
+        $(".active").removeAttr("class");
     }
     elemento.attr("class", "active");
 }
@@ -41,7 +41,7 @@ function traerPersonajes()
     }
 
     crearTabla();
-    crearFormulario();
+    //crearFormulario();
 
     $("#btnGetPersonajes").css("pointer-events", "auto");
     $("#btnAltaPersonaje").css("pointer-events", "auto");
@@ -209,13 +209,18 @@ function personajeToString(personaje)
 function crearTabla()
 {
     var puedeCrearDetalle = true; //Si no tengo elementos desde el servidor cambia a false.
-    var div = $("#info");
-    var tablaPersonajes = div.append("table");
+    //var div = $("#info");
+    //var tablaPersonajes = div.append("<table>");
 
-    tablaPersonajes.attr("border", "1px");
-    tablaPersonajes.css("border-collapse", "collapse");
-    tablaPersonajes.attr("id", "tablaPersonajes");
-    tablaPersonajes.attr("class", "tablaPersonajes");
+    $("#info").append("<table>");
+    $("#info table").attr("id", "tablaPersonajes");
+    $("#tablaPersonajes").attr("border", "1px");
+    $("#tablaPersonajes").attr("class", "tablaPersonajes");
+    $("#tablaPersonajes").css("border-collapse", "collapse");
+    //tablaPersonajes.attr("border", "1px");
+    //tablaPersonajes.css("border-collapse", "collapse");
+    //tablaPersonajes.attr("id", "tablaPersonajes");
+    //tablaPersonajes.attr("class", "tablaPersonajes");
 
     if(typeof personajes[0] != "object") //Si el servidor no trae nada creo la estructura vacía.
     {
@@ -223,7 +228,7 @@ function crearTabla()
         puedeCrearDetalle = false;
     }
 
-    crearCabecera(tablaPersonajes);
+    crearCabecera($("#tablaPersonajes"));
 
     if(puedeCrearDetalle)
     {
@@ -345,48 +350,67 @@ function crearFormulario()
 //Crea la fila de cabecera, con tantas columnas como atributos posea la personaje, en la tabla de personajes.
 function crearCabecera(tablaPersonajes)
 {
-    var filaCabecera = tablaPersonajes.append($("<tr>"));
+    //var filaCabecera = tablaPersonajes.append($("<tr>"));
+    tablaPersonajes.append("<tr>");
     var columna;
+    //var html = "<tr>";
 
     for(var atributo in personajes[0])
     {
-        columna = filaCabecera.append($("<th>"));
-        columna.text(atributo);
+        //columna = filaCabecera.append($("<th>"));
+        $("tr").append("<th> " + atributo);
+        //columna.text(atributo);
+        //html += "<th>" + atributo + "</th>";
     }
+
+    //html += "</tr>";
+
+    //tablaPersonajes.html(html);
 }
 
 //Crea tantas fila de detalle en la tabla de personajes como personajes haya cargadas.
 function crearDetalle(tablaPersonajes, datos)
 {
+    var html;
+
     for(var i = 0; i < datos.length; i++)
     {
-        var filaDetalle = tablaPersonajes.append($("<tr>"));
+        //var filaDetalle = tablaPersonajes.append($("<tr>"));
         var atributo;
-        var columna;
-        filaDetalle.on("click", seleccionarFila);
+        //var columna;
+        html = "<tr>";
+        //filaDetalle.on("click", seleccionarFila);
+        html += " onclick=seleccionarFila";
 
         for(atributo in datos[i])
         {
-            columna = filaDetalle.append("td");
-            columna.attr("class", atributo);
+            //columna = filaDetalle.append("td");
+            html += "<td>";
+            //columna.attr("class", atributo);
+            html += " class='" + atributo + "'"
 
             if(atributo == "traidor")
             {
                 if(datos[i][atributo])
                 {
-                    columna.text("Si");
+                    //columna.text("Si");
+                    html += "Si";
                 }
                 else
                 {
-                    columna.text("No");
+                    //columna.text("No");
+                    html += "Si";
                 }
             }
             else
             {
-                columna.text(datos[i][atributo]);
+                //columna.text(datos[i][atributo]);
+                html += datos[i][atributo];
             }
         }
     }
+
+    tablaPersonajes.html(html);
 }
 
 //Cuando el usuario hace click en una fila de detalle de la tabla de personajes,
