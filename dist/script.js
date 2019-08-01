@@ -3,6 +3,7 @@ addEventListener("load", asignarManejadores, false);
 var personajes = [];
 var personajeSeleccionado = {};
 var casas = ["Stark", "Targaryen", "Lannister"];
+var id = 20000;
 
 //Al dispararse el evento load cuando se termina de cargar la página web, 
 //se instancian los manejadores del evento click de los tres botones del menú.
@@ -45,7 +46,10 @@ function activarMenu(elemento)
 function traerPersonajes()
 {
     activarMenu(document.getElementById("btnGetPersonajes"));
-    var storage = localStorage.getItem("personajes");
+    var storage = JSON.parse(localStorage.getItem("personajes"));
+    document.getElementById("info").innerHTML = "";
+
+    personajes = [];
 
     if(storage == null)
     {
@@ -53,7 +57,7 @@ function traerPersonajes()
     }
     else
     {
-        personajes = JSON.parse(storage); //Respuesta de texto del servidor (JSON), lo convierto a objeto
+        personajes = storage; //Respuesta de texto del servidor (JSON), lo convierto a objeto
     }
 
     crearTabla();
@@ -104,39 +108,33 @@ function personajeEditado()
 //Llama a la función altaPersonaje del servidor, pasándole el objeto que se quiere agregar por parámetro.
 function agregarPersonaje(personaje)
 {
-    var xhr = new XMLHttpRequest();
     var nuevoPersonaje = [];
-    var spinner = crearSpinner();
+    var proximoID = localStorage.getItem("ID");
 
-    xhr.onreadystatechange = function()
+    if(proximoID == null)
     {
-        if (this.readyState == XMLHttpRequest.DONE)
-        {
-            if (this.status == 200)
-            {
-                info.removeChild(spinner);
-                nuevoPersonaje.push(JSON.parse(xhr.responseText));
-                ocultarFormulario();
-                crearDetalle(document.getElementById("tablaPersonajes"), nuevoPersonaje);
-            }
-            else
-            {
-                console.log("error: " + xhr.status);
-            }
+        proximoID = 20000;
+    }
 
-        }
-        else
-        {
-            info.appendChild(spinner);
-        }
+    personaje.id = proximoID;
 
-    };
+    nuevoPersonaje.push(personaje);
+    ocultarFormulario();
+    crearDetalle(document.getElementById("tablaPersonajes"), nuevoPersonaje);
 
-    xhr.open('POST', 'http://localhost:3000/altaPersonaje', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
-    xhr.setRequestHeader('Content-type', 'application/json');
-    xhr.send(JSON.stringify(personaje));
+    if(personajes[0].id == null)
+    {
+        personajes[0] = personaje;
+    }
+    else
+    {
+        personajes.push(personaje);
+    }
 
-    // con POST LOS DATOS PASAR POR SEND
+    proximoID++;
+
+    localStorage.setItem("personajes", JSON.stringify(personajes));
+    localStorage.setItem("ID", proximoID.toString());
 }
 
 //Llamador usado por el evento dla opción de Borrar del formulario
