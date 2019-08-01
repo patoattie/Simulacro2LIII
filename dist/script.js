@@ -1,4 +1,4 @@
-addEventListener("load", asignarManejadores, false);
+$("document").ready(asignarManejadores);
 
 var personajes = [];
 var personajeSeleccionado = {};
@@ -8,26 +8,26 @@ var casas = ["Stark", "Targaryen", "Lannister"];
 //se instancian los manejadores del evento click de los tres botones del menú.
 function asignarManejadores()
 {
-    document.getElementById("btnGetPersonajes").addEventListener("click", traerPersonajes, false);
-    document.getElementById("btnAltaPersonaje").addEventListener("click", altaPersonaje, false);
-    document.getElementById("btnEditarPersonaje").addEventListener("click", editarPersonaje, false);
+    $("#btnGetPersonajes").on("click", traerPersonajes);
+    $("#btnAltaPersonaje").on("click", altaPersonaje);
+    $("#btnEditarPersonaje").on("click", editarPersonaje);
 }
 
 function activarMenu(elemento)
 {
-    if(document.getElementsByClassName("active")[0])
+    if($(".active")[0])
     {
-        document.getElementsByClassName("active")[0].removeAttribute("class");
+        $(".active")[0].removeAttr("class");
     }
-    elemento.setAttribute("class", "active");
+    elemento.attr("class", "active");
 }
 
 //Llama a la función traerPersonajes del servidor, luego con los datos devueltos se crean en el DOM la tabla y el formulario de edición.
 function traerPersonajes()
 {
-    activarMenu(document.getElementById("btnGetPersonajes"));
+    activarMenu($("#btnGetPersonajes"));
     var storage = JSON.parse(localStorage.getItem("personajes"));
-    document.getElementById("info").innerHTML = "";
+    $("#info").innerHTML = "";
 
     personajes = [];
 
@@ -43,8 +43,8 @@ function traerPersonajes()
     crearTabla();
     crearFormulario();
 
-    document.getElementById("btnGetPersonajes").style.pointerEvents = "auto";
-    document.getElementById("btnAltaPersonaje").style.pointerEvents = "auto";
+    $("#btnGetPersonajes").css("pointer-events", "auto");
+    $("#btnAltaPersonaje").css("pointer-events", "auto");
 }
 
 //Llamador usado por el evento dla opción de Agregar del formulario
@@ -65,19 +65,18 @@ function personajeEditado()
             case "casa":
                 for(var i = 0; i < casas.length; i++)
                 {
-                    if(document.getElementById("opt" + casas[i]).checked)
+                    if($("#opt" + casas[i]).checked)
                     {
                         personaje["casa"] = casas[i];
                     }
                 }
                 break;
             case "traidor":
-                personaje["traidor"] = document.getElementById("chkTraidor").checked;
+                personaje["traidor"] = $("#chkTraidor").checked;
                 break;
             default:
                 var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
-                personaje[atributo] = document.getElementById("txt" + atributoCapitalizado).value;
-
+                personaje[atributo] = $("#txt" + atributoCapitalizado).val();
                 break;
         }
     }
@@ -100,7 +99,7 @@ function agregarPersonaje(personaje)
 
     nuevoPersonaje.push(personaje);
     ocultarFormulario();
-    crearDetalle(document.getElementById("tablaPersonajes"), nuevoPersonaje);
+    crearDetalle($("#tablaPersonajes"), nuevoPersonaje);
 
     if(personajes[0].id == null)
     {
@@ -136,7 +135,7 @@ function borrarPersonaje(personaje)
         personajes.splice(index, 1);
 
         alert("Personaje:\n\n" + personajeToString(personaje) + "\n\nfue borrada de la tabla");
-        borrarFilaSeleccionada(document.getElementById("tablaPersonajes"));
+        borrarFilaSeleccionada($("#tablaPersonajes"));
     }
   
     ocultarFormulario();
@@ -209,15 +208,14 @@ function personajeToString(personaje)
 //Crea la tabla de personajes en el div info
 function crearTabla()
 {
-    var tablaPersonajes = document.createElement("table");
     var puedeCrearDetalle = true; //Si no tengo elementos desde el servidor cambia a false.
-    var div = document.getElementById("info");
+    var div = $("#info");
+    var tablaPersonajes = div.append("table");
 
-    tablaPersonajes.setAttribute("border", "1px");
-    tablaPersonajes.style.borderCollapse = "collapse"
-    tablaPersonajes.setAttribute("id", "tablaPersonajes");
-    tablaPersonajes.setAttribute("class", "tablaPersonajes");
-    div.appendChild(tablaPersonajes);
+    tablaPersonajes.attr("border", "1px");
+    tablaPersonajes.css("border-collapse", "collapse");
+    tablaPersonajes.attr("id", "tablaPersonajes");
+    tablaPersonajes.attr("class", "tablaPersonajes");
 
     if(typeof personajes[0] != "object") //Si el servidor no trae nada creo la estructura vacía.
     {
@@ -238,144 +236,122 @@ function crearTabla()
 //y en la modificación no se altera su valor.
 function crearFormulario()
 {
-    var div = document.getElementById("info");
-    var formulario = document.createElement("form");
-    var grupo = document.createElement("fieldset");
-    var leyenda = document.createElement("legend");
-    var botonAgregar = document.createElement("input");
-    var botonModificar = document.createElement("input");
-    var botonBorrar = document.createElement("input");
-    var botonCancelar = document.createElement("input");
+    var div = $("#info");
 
-    formulario.setAttribute("action", "#");
-    formulario.setAttribute("id", "formularioPersonajes");
-    formulario.style.display = "none";
+    var formulario = div.append("form");
+    formulario.attr("action", "#");
+    formulario.attr("id", "formularioPersonajes");
+    formulario.css("display", "none");
 
-    div.appendChild(formulario);
+    var grupo = formulario.append("fieldset");
 
-    formulario.appendChild(grupo);
+    var leyenda = grupo.append("legend");
+    leyenda.text("Personaje");
 
-    grupo.appendChild(leyenda);
-
-    leyenda.textContent = "Personaje";
+    var botonAgregar = grupo.append("input");
+    var botonModificar = grupo.append("input");
+    var botonBorrar = grupo.append("input");
+    var botonCancelar = grupo.append("input");
 
     for(var atributo in personajes[0])
     {
         switch(atributo)
         {
             case "casa":
-                var grupoCasa = document.createElement("fieldset");
-                var leyendaCasa = document.createElement("legend");
+                var grupoCasa = grupo.append("fieldset");
+                var leyendaCasa = grupoCasa.append("legend");
 
-                grupo.appendChild(grupoCasa);
-                grupoCasa.appendChild(leyendaCasa);
-                grupoCasa.setAttribute("class", "grupoInterno");
-                leyendaCasa.textContent = "Casa";
+                grupoCasa.attr("class", "grupoInterno");
+                leyendaCasa.text("Casa");
 
                 for(var i = 0; i < casas.length; i++)
                 {
-                    var etiquetaCasa = document.createElement("label");
-                    var optButton = document.createElement("input");
+                    var etiquetaCasa = grupoCasa.append("label");
+                    var optButton = grupoCasa.append("input");
 
-                    etiquetaCasa.setAttribute("for", "opt" + casas[i]);
-                    etiquetaCasa.textContent = casas[i];
+                    etiquetaCasa.attr("for", "opt" + casas[i]);
+                    etiquetaCasa.text(casas[i]);
 
-                    optButton.setAttribute("type", "radio");
-                    optButton.setAttribute("id", "opt" + casas[i]);
-                    optButton.setAttribute("name", "casa");
-                    optButton.setAttribute("value", casas[i]);
-                    optButton.textContent = " " + casas[i];
+                    optButton.attr("type", "radio");
+                    optButton.attr("id", "opt" + casas[i]);
+                    optButton.attr("name", "casa");
+                    optButton.attr("value", casas[i]);
+                    optButton.text(" " + casas[i]);
 
-                    grupoCasa.appendChild(optButton);
-                    grupoCasa.appendChild(etiquetaCasa);
-                    grupoCasa.appendChild(document.createElement("br"));
+                    grupoCasa.append("br");
                 }
 
                 break;
 
             case "traidor":
-                var grupoTraidor = document.createElement("fieldset");
-                var chkTraidor = document.createElement("input");
-                var etiquetaTraidor = document.createElement("label");
+                var grupoTraidor = grupo.append("fieldset");
+                var chkTraidor = grupoTraidor.append("input");
+                var etiquetaTraidor = grupoTraidor.append("label");
 
-                grupoTraidor.setAttribute("class", "grupoInterno");
+                grupoTraidor.attr("class", "grupoInterno");
 
-                grupo.appendChild(grupoTraidor);
+                chkTraidor.attr("type", "checkbox");
+                chkTraidor.attr("id", "chkTraidor");
+                chkTraidor.attr("name", "traidor");
+                chkTraidor.attr("value", "traidor");
+                chkTraidor.text("Es Traidor");
 
-                chkTraidor.setAttribute("type", "checkbox");
-                chkTraidor.setAttribute("id", "chkTraidor");
-                chkTraidor.setAttribute("name", "traidor");
-                chkTraidor.setAttribute("value", "traidor");
-                chkTraidor.textContent = "Es Traidor";
-
-                etiquetaTraidor.setAttribute("for", "chkTraidor");
-                etiquetaTraidor.textContent = "Es Traidor";
-
-                grupoTraidor.appendChild(etiquetaTraidor);
-                grupoTraidor.appendChild(chkTraidor);
+                etiquetaTraidor.attr("for", "chkTraidor");
+                etiquetaTraidor.text("Es Traidor");
     
                 break;
 
             default:
-                var cuadroTexto = document.createElement("input");
-                var etiqueta = document.createElement("label");
+                var cuadroTexto = grupo.append("input");
+                var etiqueta = grupo.append("label");
                 var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
         
-                etiqueta.setAttribute("for", "txt" + atributoCapitalizado);
-                etiqueta.textContent = atributoCapitalizado + ": ";
+                etiqueta.attr("for", "txt" + atributoCapitalizado);
+                etiqueta.text(atributoCapitalizado + ": ");
                         
-                cuadroTexto.setAttribute("type", "text");
-                cuadroTexto.setAttribute("id", "txt" + atributoCapitalizado);
+                cuadroTexto.attr("type", "text");
+                cuadroTexto.attr("id", "txt" + atributoCapitalizado);
 
                 if(atributo === "id")
                 {
-                    cuadroTexto.setAttribute("readonly", "");
+                    cuadroTexto.attr("readonly", "");
                 }
-                
-                grupo.appendChild(etiqueta);
-                grupo.appendChild(cuadroTexto);
 
                 break;
         }
     }
 
-    botonAgregar.setAttribute("type", "button");
-    botonAgregar.setAttribute("id", "btnAgregar");
-    botonAgregar.value = "Agregar";
-    botonAgregar.addEventListener("click", opcionAgregarPersonaje, false);
+    botonAgregar.attr("type", "button");
+    botonAgregar.attr("id", "btnAgregar");
+    botonAgregar.val("Agregar");
+    botonAgregar.on("click", opcionAgregarPersonaje);
 
-    botonModificar.setAttribute("type", "button");
-    botonModificar.setAttribute("id", "btnModificar");
-    botonModificar.value = "Modificar";
-    botonModificar.addEventListener("click", opcionModificarPersonaje, false);
+    botonModificar.attr("type", "button");
+    botonModificar.attr("id", "btnModificar");
+    botonModificar.val("Modificar");
+    botonModificar.on("click", opcionModificarPersonaje);
 
-    botonBorrar.setAttribute("type", "button");
-    botonBorrar.setAttribute("id", "btnBorrar");
-    botonBorrar.value = "Borrar";
-    botonBorrar.addEventListener("click", opcionBorrarPersonaje, false);
+    botonBorrar.attr("type", "button");
+    botonBorrar.attr("id", "btnBorrar");
+    botonBorrar.val("Borrar");
+    botonBorrar.on("click", opcionBorrarPersonaje);
 
-    botonCancelar.setAttribute("type", "button");
-    botonCancelar.setAttribute("id", "btnCancelar");
-    botonCancelar.value = "Cancelar";
-    botonCancelar.addEventListener("click", ocultarFormulario, false);
-
-    grupo.appendChild(botonAgregar);
-    grupo.appendChild(botonModificar);
-    grupo.appendChild(botonBorrar);
-    grupo.appendChild(botonCancelar);
+    botonCancelar.attr("type", "button");
+    botonCancelar.attr("id", "btnCancelar");
+    botonCancelar.val("Cancelar");
+    botonCancelar.on("click", ocultarFormulario);
 }
 
 //Crea la fila de cabecera, con tantas columnas como atributos posea la personaje, en la tabla de personajes.
 function crearCabecera(tablaPersonajes)
 {
-    var filaCabecera = document.createElement("tr");
+    var filaCabecera = tablaPersonajes.append($("<tr>"));
     var columna;
-    tablaPersonajes.appendChild(filaCabecera);
+
     for(var atributo in personajes[0])
     {
-        columna = document.createElement("th");
-        columna.textContent = atributo;
-        filaCabecera.appendChild(columna);
+        columna = filaCabecera.append($("<th>"));
+        columna.text(atributo);
     }
 }
 
@@ -384,34 +360,31 @@ function crearDetalle(tablaPersonajes, datos)
 {
     for(var i = 0; i < datos.length; i++)
     {
-        var filaDetalle = document.createElement("tr");
+        var filaDetalle = tablaPersonajes.append($("<tr>"));
         var atributo;
         var columna;
-        filaDetalle.addEventListener("click", seleccionarFila, false);
-        tablaPersonajes.appendChild(filaDetalle);
+        filaDetalle.on("click", seleccionarFila);
 
         for(atributo in datos[i])
         {
-            columna = document.createElement("td");
-            columna.setAttribute("class", atributo);
+            columna = filaDetalle.append("td");
+            columna.attr("class", atributo);
 
             if(atributo == "traidor")
             {
                 if(datos[i][atributo])
                 {
-                    columna.textContent = "Si";
+                    columna.text("Si");
                 }
                 else
                 {
-                    columna.textContent = "No";
+                    columna.text("No");
                 }
             }
             else
             {
-                columna.textContent = datos[i][atributo];
+                columna.text(datos[i][atributo]);
             }
-
-            filaDetalle.appendChild(columna);
         }
     }
 }
@@ -421,22 +394,22 @@ function crearDetalle(tablaPersonajes, datos)
 //el atributo id a la fila y carga la personaje en el array de personaje seleccionada.
 function seleccionarFila()
 {
-    //document.getElementById("btnEditarPersonaje").removeAttribute("disabled");
-    document.getElementById("btnEditarPersonaje").style.pointerEvents = "auto";
+    //$("#btnEditarPersonaje").removeAttr("disabled");
+    $("#btnEditarPersonaje").css("pointer-events", "auto");
     blanquearFila();
     
-    this.setAttribute("id", "filaSeleccionada");
+    this.attr("id", "filaSeleccionada");
 
     //Recorro las columnas de la fila seleccionada, guardando un atributo por columna en personajeSeleccionado.
-    for(var i = 0; i < this.childNodes.length; i++)
+    for(var i = 0; i < this.children().length; i++)
     {
-        if(this.childNodes[i].getAttribute("class") == "traidor")
+        if(this.children().attr("class") == "traidor")
         {
-            personajeSeleccionado[this.childNodes[i].getAttribute("class")] = (this.childNodes[i].textContent == "Si");
+            personajeSeleccionado[this.children().attr("class")] = (this.children().text("Si"));
         }
         else
         {
-            personajeSeleccionado[this.childNodes[i].getAttribute("class")] = this.childNodes[i].textContent;
+            personajeSeleccionado[this.children().attr("class")] = this.children().text();
         }
     }
 }
@@ -444,11 +417,11 @@ function seleccionarFila()
 //Quita el atributo id de la fila seleccionada.
 function blanquearFila()
 {
-    var filaSeleccionada = document.getElementById("filaSeleccionada");
+    var filaSeleccionada = $("#filaSeleccionada");
 
     if(filaSeleccionada) //Si hay una fila seleccionada, le quito el id
     {
-        filaSeleccionada.removeAttribute("id");
+        filaSeleccionada.removeAttr("id");
     }
 }
 
@@ -457,7 +430,7 @@ function blanquearFila()
 //una vez devuelto el ok del mismo.
 function borrarFilaSeleccionada(tabla)
 {
-    tabla.removeChild(document.getElementById("filaSeleccionada"));
+    tabla.remove($("#filaSeleccionada"));
 }
 
 //Modifica los datos de la fila seleccionada con los datos de la personaje pasada por parámetro.
@@ -465,25 +438,25 @@ function borrarFilaSeleccionada(tabla)
 //una vez devuelto el ok del mismo.
 function modificarFilaSeleccionada(datos)
 {
-    var filaSeleccionada = document.getElementById("filaSeleccionada");
+    var filaSeleccionada = $("#filaSeleccionada");
 
     //Recorro las columnas de la fila seleccionada, guardando un atributo por columna en personajeSeleccionado.
-    for(var i = 0; i < filaSeleccionada.childNodes.length; i++)
+    for(var i = 0; i < filaSeleccionada.children().length; i++)
     {
-        if(filaSeleccionada.childNodes[i].getAttribute("class") == "traidor")
+        if(filaSeleccionada.children().attr("class") == "traidor")
         {
-            if(datos[filaSeleccionada.childNodes[i].getAttribute("class")])
+            if(datos[filaSeleccionada.children().attr("class")])
             {
-                filaSeleccionada.childNodes[i].textContent = "Si";
+                filaSeleccionada.children().text("Si");
             }
             else
             {
-                filaSeleccionada.childNodes[i].textContent = "No";
+                filaSeleccionada.children().text("No");
             }
         }
         else
         {
-            filaSeleccionada.childNodes[i].textContent = datos[filaSeleccionada.childNodes[i].getAttribute("class")];
+            filaSeleccionada.children().text(datos[filaSeleccionada.children().attr("class")]);
         }
     }
 }
@@ -492,13 +465,13 @@ function modificarFilaSeleccionada(datos)
 //sin parámetro. Lo invoca la opción de Alta del menú
 function altaPersonaje()
 {
-    activarMenu(document.getElementById("btnAltaPersonaje"));
+    activarMenu($("#btnAltaPersonaje"));
 
-    document.getElementById("btnAltaPersonaje").style.pointerEvents = "none";
-    document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
+    $("#btnAltaPersonaje").css("pointer-events", "none");
+    $("#btnEditarPersonaje").css("pointer-events", "none");
 
-    document.getElementById("tablaPersonajes").style.display = "none";
-    document.getElementById("formularioPersonajes").style.display = "initial";
+    $("#tablaPersonajes").css("display","none");
+    $("#formularioPersonajes").css("display","initial");
 
     mostrarFormulario();
 }
@@ -507,13 +480,13 @@ function altaPersonaje()
 //pasándole por parámetro la personaje que se quiere editar. Lo invoca la opción de Editar del menú
 function editarPersonaje()
 {
-    activarMenu(document.getElementById("btnEditarPersonaje"));
+    activarMenu($("#btnEditarPersonaje"));
 
-    document.getElementById("btnAltaPersonaje").style.pointerEvents = "none";
-    document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
+    $("#btnAltaPersonaje").css("pointer-events", "none");
+    $("#btnEditarPersonaje").css("pointer-events", "none");
 
-    document.getElementById("tablaPersonajes").style.display = "none";
-    document.getElementById("formularioPersonajes").style.display = "initial";
+    $("#tablaPersonajes").css("display","none");
+    $("#formularioPersonajes").css("display","initial");
 
     mostrarFormulario(personajeSeleccionado);
 }
@@ -533,15 +506,15 @@ function mostrarFormulario()
     {
         datos = arguments[0];
 
-        document.getElementById("btnAgregar").style.display = "none";
-        document.getElementById("btnModificar").style.display = "initial";
-        document.getElementById("btnBorrar").style.display = "initial";
+        $("#btnAgregar").css("display","none");
+        $("#btnModificar").css("display","initial");
+        $("#btnBorrar").css("display","initial");
     }
     else
     {
-        document.getElementById("btnAgregar").style.display = "initial";
-        document.getElementById("btnModificar").style.display = "none";
-        document.getElementById("btnBorrar").style.display = "none";
+        $("#btnAgregar").css("display","initial");
+        $("#btnModificar").css("display","none");
+        $("#btnBorrar").css("display","none");
     }
 
     for(var atributo in personajes[0])
@@ -557,11 +530,11 @@ function mostrarFormulario()
                     {
                         if(casas[i] == datos[atributo])
                         {
-                            document.getElementById("opt" + casas[i]).checked = true;
+                            $("#opt" + casas[i]).prop("checked", true);
                         }
                         else
                         {
-                            document.getElementById("opt" + casas[i]).checked = false;
+                            $("#opt" + casas[i]).prop("checked", false);
                         }
                     }
                 }
@@ -571,11 +544,11 @@ function mostrarFormulario()
                     {
                         if(i == 0)
                         {
-                            document.getElementById("opt" + casas[i]).checked = true;
+                            $("#opt" + casas[i]).prop("checked", true);
                         }
                         else
                         {
-                            document.getElementById("opt" + casas[i]).checked = false;
+                            $("#opt" + casas[i]).prop("checked", false);
                         }
                     }
                 }
@@ -584,28 +557,28 @@ function mostrarFormulario()
                 case "traidor":
                     if(typeof datos == "object")
                     {
-                        document.getElementById("chkTraidor").checked = datos[atributo];
+                        $("#chkTraidor").prop("checked", datos[atributo]);
                     }
                     else
                     {
-                        document.getElementById("chkTraidor").checked = false;
+                        $("#chkTraidor").prop("checked", false);
                     }
                     break;
                     
                 default:
                     if(typeof datos == "object")
                     {
-                        document.getElementById("txt" + atributoCapitalizado).value = datos[atributo];
+                        $("#txt" + atributoCapitalizado).val(datos[atributo]);
                     }
                     else
                     {
                         if(atributo === "id")
                         {
-                            document.getElementById("txt" + atributoCapitalizado).value = localStorage.getItem("ID");
+                            $("#txt" + atributoCapitalizado).val(localStorage.getItem("ID"));
                         }
                         else
                         {
-                            document.getElementById("txt" + atributoCapitalizado).value = "";
+                            $("#txt" + atributoCapitalizado).val("");
                         }
                     }
                     break;
@@ -617,13 +590,13 @@ function mostrarFormulario()
 //Se blanquea cualquier fila que se haya previamente seleccionado.
 function ocultarFormulario()
 {
-    activarMenu(document.getElementById("btnGetPersonajes"));
+    activarMenu($("#btnGetPersonajes"));
 
-    document.getElementById("btnAltaPersonaje").style.pointerEvents = "auto";
-    document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
+    $("#btnAltaPersonaje").css("pointer-events", "auto");
+    $("#btnEditarPersonaje").css("pointer-events", "none");
 
     blanquearFila();
 
-    document.getElementById("tablaPersonajes").style.display = "table";
-    document.getElementById("formularioPersonajes").style.display = "none";
+    $("#tablaPersonajes").css("display","table");
+    $("#formularioPersonajes").css("display","none");
 }
