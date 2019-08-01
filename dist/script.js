@@ -14,25 +14,6 @@ function asignarManejadores()
     document.getElementById("btnEditarPersonaje").addEventListener("click", editarPersonaje, false);
 }
 
-//Crea en el DOM el spinner que se utiliza para la espera de la respuesta del servidor.
-//Si el mismo ya está creado, entonces solamente lo instancia.
-function crearSpinner()
-{
-    var spinner = document.getElementById("spinner");
-    
-    if(!spinner) //Si el spinner no está creado en el DOM
-    {
-        spinner = document.createElement("img");
-        spinner.setAttribute("src", "image/preloader.gif");
-        spinner.setAttribute("alt", "Espere mientras se procesa la petición...");
-        spinner.setAttribute("height", "48px");
-        spinner.setAttribute("width", "48px");
-        spinner.setAttribute("id", "spinner");
-    }
-
-    return spinner;
-}
-
 function activarMenu(elemento)
 {
     if(document.getElementsByClassName("active")[0])
