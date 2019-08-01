@@ -3,7 +3,6 @@ addEventListener("load", asignarManejadores, false);
 var personajes = [];
 var personajeSeleccionado = {};
 var casas = ["Stark", "Targaryen", "Lannister"];
-var id = 20000;
 
 //Al dispararse el evento load cuando se termina de cargar la página web, 
 //se instancian los manejadores del evento click de los tres botones del menú.
