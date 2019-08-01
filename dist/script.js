@@ -44,43 +44,23 @@ function activarMenu(elemento)
 //Llama a la función traerPersonajes del servidor, luego con los datos devueltos se crean en el DOM la tabla y el formulario de edición.
 function traerPersonajes()
 {
-    var xhr = new XMLHttpRequest();
-    var info = document.getElementById("info");
-    var spinner = crearSpinner();
-
-    info.innerHTML = "";
-
     activarMenu(document.getElementById("btnGetPersonajes"));
+    var storage = localStorage.getItem("personajes");
 
-    xhr.onreadystatechange = function() //0 al 4 son los estados, 4 es el estado DONE
+    if(storage == null)
     {
-        if(this.readyState == XMLHttpRequest.DONE) //XMLHttpRequest.DONE = 4
-        {
-            if(this.status == 200) // Estado OK
-            {
-                info.innerHTML = "";
+        personajes.push("");
+    }
+    else
+    {
+        personajes = JSON.parse(storage); //Respuesta de texto del servidor (JSON), lo convierto a objeto
+    }
 
-                personajes = JSON.parse(this.responseText); //Respuesta de texto del servidor (JSON), lo convierto a objeto
+    crearTabla();
+    crearFormulario();
 
-                crearTabla();
-                crearFormulario();
-
-                document.getElementById("btnGetPersonajes").style.pointerEvents = "auto";
-                document.getElementById("btnAltaPersonaje").style.pointerEvents = "auto";
-            }
-        }
-        else
-        {
-            document.getElementById("btnGetPersonajes").style.pointerEvents = "none";
-            document.getElementById("btnAltaPersonaje").style.pointerEvents = "none";
-            document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
-    
-            info.appendChild(spinner);
-        }
-    };
-
-    xhr.open("GET", "http://localhost:3000/traerPersonajes", true); // true para que sea asincronico, debe ir el protocolo en forma explicita
-    xhr.send(); //se envia la peticion al servidor
+    document.getElementById("btnGetPersonajes").style.pointerEvents = "auto";
+    document.getElementById("btnAltaPersonaje").style.pointerEvents = "auto";
 }
 
 //Llamador usado por el evento dla opción de Agregar del formulario
