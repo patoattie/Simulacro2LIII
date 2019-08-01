@@ -109,9 +109,9 @@ function personajeEditado()
 function agregarPersonaje(personaje)
 {
     var nuevoPersonaje = [];
-    var proximoID = localStorage.getItem("ID");
+    var proximoID = parseInt(localStorage.getItem("ID"));
 
-    if(proximoID == null)
+    if(isNaN(proximoID))
     {
         proximoID = 20000;
     }
@@ -670,7 +670,14 @@ function mostrarFormulario()
                     }
                     else
                     {
-                        document.getElementById("txt" + atributoCapitalizado).value = "";
+                        if(atributo === "id")
+                        {
+                            document.getElementById("txt" + atributoCapitalizado).value = localStorage.getItem("ID");
+                        }
+                        else
+                        {
+                            document.getElementById("txt" + atributoCapitalizado).value = "";
+                        }
                     }
                     break;
         }
