@@ -146,48 +146,22 @@ function opcionBorrarPersonaje()
 //Llama a la función bajaPersonaje del servidor, pasándole el objeto que se quiere eliminar por parámetro.
 function borrarPersonaje(personaje)
 {
-    var xhr = new XMLHttpRequest();
-    var spinner = crearSpinner();
-
-    xhr.onreadystatechange = function()
+    var index = personajes.findIndex((per) => 
     {
-        if (this.readyState == XMLHttpRequest.DONE)
-        {
-            if (this.status == 200)
-            {
-                var respuesta = JSON.parse(xhr.responseText);
-                info.removeChild(spinner);
+        return per.id == personaje.id;
+    });
+  
+    if (index != -1)
+    {
+        personajes.splice(index, 1);
 
-                if(respuesta.todoOk === 1)
-                {
-                    alert("Personaje:\n\n" + personajeToString(personaje) + "\n\nfue borrada de la tabla");
-                    borrarFilaSeleccionada(document.getElementById("tablaPersonajes"));
-                }
-                else
-                {
-                    alert("Error al borrar personaje. No se hicieron cambios");
-                }
+        alert("Personaje:\n\n" + personajeToString(personaje) + "\n\nfue borrada de la tabla");
+        borrarFilaSeleccionada(document.getElementById("tablaPersonajes"));
+    }
+  
+    ocultarFormulario();
 
-                ocultarFormulario();
-            }
-            else
-            {
-                console.log("error: " + xhr.status);
-            }
-
-        }
-        else
-        {
-            info.appendChild(spinner);
-        }
-
-    };
-
-    xhr.open('POST', 'http://localhost:3000/bajaPersonaje', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
-    xhr.setRequestHeader('Content-type', 'application/json');
-    xhr.send(JSON.stringify(personaje));
-
-    // con POST LOS DATOS PASAR POR SEND
+    localStorage.setItem("personajes", JSON.stringify(personajes));
 }
 
 //Llamador usado por el evento dla opción de Modificar del formulario
@@ -199,48 +173,23 @@ function opcionModificarPersonaje()
 //Llama a la función modificarPersonaje del servidor, pasándole el objeto que se quiere modificar por parámetro.
 function modificarPersonaje(personaPre, personaPost)
 {
-    var xhr = new XMLHttpRequest();
-    var spinner = crearSpinner();
-
-    xhr.onreadystatechange = function()
+    var index = personajes.findIndex((per) => 
     {
-        if (this.readyState == XMLHttpRequest.DONE)
-        {
-            if (this.status == 200)
-            {
-                var respuesta = JSON.parse(xhr.responseText);
-                info.removeChild(spinner);
+        return per.id == personaPost.id;
+    });
+  
+    if (index != -1)
+    {
+        personajes.splice(index, 1);
+        personajes.push(personaPost);
 
-                if(respuesta.todoOk === 1)
-                {
-                    alert("Personaje:\n\n" + personajeToString(personaPre) + "\n\nfue modificada a:\n\n" + personajeToString(personaPost));
-                    modificarFilaSeleccionada(personaPost);
-                }
-                else
-                {
-                    alert("Error al modificar personaje. No se hicieron cambios");
-                }
+        alert("Personaje:\n\n" + personajeToString(personaPre) + "\n\nfue modificada a:\n\n" + personajeToString(personaPost));
+        modificarFilaSeleccionada(personaPost);
+    }
+  
+    ocultarFormulario();
 
-                ocultarFormulario();
-            }
-            else
-            {
-                console.log("error: " + xhr.status);
-            }
-
-        }
-        else
-        {
-            info.appendChild(spinner);
-        }
-
-    };
-
-    xhr.open('POST', 'http://localhost:3000/modificarPersonaje', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
-    xhr.setRequestHeader('Content-type', 'application/json');
-    xhr.send(JSON.stringify(personaPost));
-
-    // con POST LOS DATOS PASAR POR SEND
+    localStorage.setItem("personajes", JSON.stringify(personajes));
 }
 
 //Devuelve un string con la descripción de atributos y valores del objeto pasado por parámetro.
